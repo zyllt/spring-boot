@@ -258,6 +258,7 @@ public class Binder {
 		if (property == null && containsNoDescendantOf(context.streamSources(), name)) {
 			return null;
 		}
+		//集合类binder (数组，集合，map)
 		AggregateBinder<?> aggregateBinder = getAggregateBinder(target, context);
 		if (aggregateBinder != null) {
 			return bindAggregate(name, target, handler, context, aggregateBinder);
@@ -279,6 +280,7 @@ public class Binder {
 		return bindBean(name, target, handler, context, allowRecursiveBinding);
 	}
 
+	//数组，集合，map
 	private AggregateBinder<?> getAggregateBinder(Bindable<?> target, Context context) {
 		Class<?> resolvedType = target.getType().resolve(Object.class);
 		if (Map.class.isAssignableFrom(resolvedType)) {

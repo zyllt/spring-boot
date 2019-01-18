@@ -175,6 +175,7 @@ public class ConfigFileApplicationListener
 
 	private void onApplicationEnvironmentPreparedEvent(
 			ApplicationEnvironmentPreparedEvent event) {
+		//加载environmentPostProcessor
 		List<EnvironmentPostProcessor> postProcessors = loadPostProcessors();
 		postProcessors.add(this);
 		AnnotationAwareOrderComparator.sort(postProcessors);
@@ -208,6 +209,7 @@ public class ConfigFileApplicationListener
 	 */
 	protected void addPropertySources(ConfigurableEnvironment environment,
 			ResourceLoader resourceLoader) {
+		//RandomValuePropertySource
 		RandomValuePropertySource.addToEnvironment(environment);
 		new Loader(environment, resourceLoader).load();
 	}
@@ -324,6 +326,7 @@ public class ConfigFileApplicationListener
 			this.processedProfiles = new LinkedList<>();
 			this.activatedProfiles = false;
 			this.loaded = new LinkedHashMap<>();
+			//加载active profile
 			initializeProfiles();
 			while (!this.profiles.isEmpty()) {
 				Profile profile = this.profiles.poll();

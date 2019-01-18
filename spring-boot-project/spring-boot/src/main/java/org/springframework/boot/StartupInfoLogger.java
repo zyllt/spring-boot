@@ -65,8 +65,8 @@ class StartupInfoLogger {
 		message.append("Starting ");
 		message.append(getApplicationName());
 		message.append(getVersion(this.sourceClass));
-		message.append(getOn());
-		message.append(getPid());
+		message.append(getOn()); //on localhost
+		message.append(getPid()); //with PID 31918
 		message.append(getContext());
 		return message.toString();
 	}

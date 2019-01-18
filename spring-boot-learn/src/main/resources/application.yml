@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active: "dev"
+    include: test,prod
+  main:
+    banner-mode: console
+
+test:
+  spring:
+   bind-type: ${random.value}
+
