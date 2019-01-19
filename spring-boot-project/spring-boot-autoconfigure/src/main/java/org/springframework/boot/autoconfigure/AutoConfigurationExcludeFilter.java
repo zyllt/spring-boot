@@ -29,6 +29,9 @@ import org.springframework.core.type.filter.TypeFilter;
 /**
  * A {@link TypeFilter} implementation that matches registered auto-configuration classes.
  *
+ *
+ * 一个{@link TypeFilter}实现用于匹配已注册的auto-configuration类。
+ *
  * @author Stephane Nicoll
  * @since 1.5.0
  */

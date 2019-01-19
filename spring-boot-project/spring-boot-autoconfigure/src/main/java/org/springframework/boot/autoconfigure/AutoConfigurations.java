@@ -31,6 +31,8 @@ import org.springframework.util.ClassUtils;
 /**
  * {@link Configurations} representing auto-configuration {@code @Configuration} classes.
  *
+ *
+ *  代表auto-configuration类集合
  * @author Phillip Webb
  * @since 2.0.0
  */

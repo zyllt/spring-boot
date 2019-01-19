@@ -40,6 +40,9 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  * have {@code tomcat-embedded.jar} on your classpath you are likely to want a
  * {@link TomcatServletWebServerFactory} (unless you have defined your own
  * {@link ServletWebServerFactory} bean).
+ *
+ * 启用spring application context的自动配置功能，尝试猜测和配置你可能需要的beans.自动配置类通常是基于你的classpath和你定义的beans来使用的.
+ * 例如，你有一个tomcat-embedded.jar，你可能想要一个TomcatServletWebServerFactory（前提是你没有定义自己的ServletWebServerFactory bean）
  * <p>
  * When using {@link SpringBootApplication}, the auto-configuration of the context is
  * automatically enabled and adding this annotation has therefore no additional effect.
@@ -57,6 +60,8 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  * It is generally recommended that you place {@code @EnableAutoConfiguration} (if you're
  * not using {@code @SpringBootApplication}) in a root package so that all sub-packages
  * and classes can be searched.
+ *
+ * 使用EnableAutoConfiguration注释的类（通常使用SpringBootApplication）所在的包是有特殊意义的，它经常是被作为'默认的扫描包'。
  * <p>
  * Auto-configuration classes are regular Spring {@link Configuration} beans. They are
  * located using the {@link SpringFactoriesLoader} mechanism (keyed against this class).

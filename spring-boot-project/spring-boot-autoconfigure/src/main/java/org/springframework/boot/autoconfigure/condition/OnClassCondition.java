@@ -60,12 +60,14 @@ class OnClassCondition extends SpringBootCondition
 	public boolean[] match(String[] autoConfigurationClasses,
 			AutoConfigurationMetadata autoConfigurationMetadata) {
 		ConditionEvaluationReport report = getConditionEvaluationReport();
+		//返回验证结果，这个结果的长度和autoConfigurationClasses相同，如果验证通过对应的结果为null或者ConditionOutcome.match=true
 		ConditionOutcome[] outcomes = getOutcomes(autoConfigurationClasses,
 				autoConfigurationMetadata);
 		boolean[] match = new boolean[outcomes.length];
 		for (int i = 0; i < outcomes.length; i++) {
 			match[i] = (outcomes[i] == null || outcomes[i].isMatch());
 			if (!match[i] && outcomes[i] != null) {
+				//验证不通过的输出log
 				logOutcome(autoConfigurationClasses[i], outcomes[i]);
 				if (report != null) {
 					report.recordConditionEvaluation(autoConfigurationClasses[i], this,
@@ -90,20 +92,34 @@ class OnClassCondition extends SpringBootCondition
 		// Split the work and perform half in a background thread. Using a single
 		// additional thread seems to offer the best performance. More threads make
 		// things worse
+		//有个独立的线程处理一半，主线程处理一半
 		int split = autoConfigurationClasses.length / 2;
+		//创建StandardOutcomesResolver，并且启动一个独立线程来执行一半任务
 		OutcomesResolver firstHalfResolver = createOutcomesResolver(
 				autoConfigurationClasses, 0, split, autoConfigurationMetadata);
+
+		//主线程执行StandardOutcomesResolver
 		OutcomesResolver secondHalfResolver = new StandardOutcomesResolver(
 				autoConfigurationClasses, split, autoConfigurationClasses.length,
 				autoConfigurationMetadata, this.beanClassLoader);
 		ConditionOutcome[] secondHalf = secondHalfResolver.resolveOutcomes();
+		//这个实际是用thread.join()来保证独立线程任务执行完成了
 		ConditionOutcome[] firstHalf = firstHalfResolver.resolveOutcomes();
+		//合并2个结果
 		ConditionOutcome[] outcomes = new ConditionOutcome[autoConfigurationClasses.length];
 		System.arraycopy(firstHalf, 0, outcomes, 0, firstHalf.length);
 		System.arraycopy(secondHalf, 0, outcomes, split, secondHalf.length);
 		return outcomes;
 	}
 
+	/**
+	 * 创建StandardOutcomesResolver，并且启动一个专门的线程来执行
+	 * @param autoConfigurationClasses
+	 * @param start
+	 * @param end
+	 * @param autoConfigurationMetadata
+	 * @return
+	 */
 	private OutcomesResolver createOutcomesResolver(String[] autoConfigurationClasses,
 			int start, int end, AutoConfigurationMetadata autoConfigurationMetadata) {
 		OutcomesResolver outcomesResolver = new StandardOutcomesResolver(
@@ -304,9 +320,11 @@ class OnClassCondition extends SpringBootCondition
 			ConditionOutcome[] outcomes = new ConditionOutcome[end - start];
 			for (int i = start; i < end; i++) {
 				String autoConfigurationClass = autoConfigurationClasses[i];
+				//从PropertiesAutoConfigurationMetadata 注解ConditionalOnClass的类，其实就是获取这个类有使用@ConditionalOnClass修饰时设置的类
 				Set<String> candidates = autoConfigurationMetadata
 						.getSet(autoConfigurationClass, "ConditionalOnClass");
 				if (candidates != null) {
+					//判断这个类是否存在，如果存在就返回null
 					outcomes[i - start] = getOutcome(candidates);
 				}
 			}

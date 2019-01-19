@@ -43,7 +43,11 @@ import org.springframework.core.type.filter.TypeFilter;
  * Note that {@code TypeExcludeFilters} are initialized very early in the application
  * lifecycle, they should generally not have dependencies on any other beans. They are
  * primarily used internally to support {@code spring-boot-test}.
+ * 提供从BeanFactory加载并自动应用于SpringBootApplication扫描的排除TypeFilters。也可以直接使用@ComponentScan
  *
+ * 实现应该提供一个在BeanFactory注册的子类，并覆盖match(MetadataReader, MetadataReaderFactory)方法。它们还应该实现一个有效的hashCode和equals方法，以便它们可以作为Spring test的应用程序上下文缓存的一部分使用。
+ *
+ * 注意，typeexclude过滤器是在应用程序生命周期的早期初始化的，它们通常不应该依赖于任何其他bean。它们主要用于内部支持spring引导测试。
  * @author Phillip Webb
  * @since 1.4.0
  */

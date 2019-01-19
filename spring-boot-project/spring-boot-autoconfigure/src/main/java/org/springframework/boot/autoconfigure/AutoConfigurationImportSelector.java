@@ -87,19 +87,42 @@ public class AutoConfigurationImportSelector
 
 	@Override
 	public String[] selectImports(AnnotationMetadata annotationMetadata) {
+		/**
+		 * {@link EnableAutoConfiguration.ENABLED_OVERRIDE_PROPERTY} = false时此自动配置不启用，默认true
+		 */
 		if (!isEnabled(annotationMetadata)) {
 			return NO_IMPORTS;
 		}
+		/**
+		 * 加载{@link AutoConfigurationMetadataLoader.PATH}文件（此文件是spring boot autoconfiguration模块编译时自动生成，保存所有的autoconfiguration的conditional ）
+		 * 在调用AutoConfigurationImportFilter被使用(OnClassCondition)
+		 */
 		AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
 				.loadMetadata(this.beanClassLoader);
+		/**
+		 *  *获取{@link EnableAutoConfiguration} 属性，肯定有值
+		 */
 		AnnotationAttributes attributes = getAttributes(annotationMetadata);
+		//获取自动配置的类名称集合，使用SpringFactoriesLoader
 		List<String> configurations = getCandidateConfigurations(annotationMetadata,
 				attributes);
+		//去重，转set
 		configurations = removeDuplicates(configurations);
+		//获取需要排除的类，通过注解或者配置
 		Set<String> exclusions = getExclusions(annotationMetadata, attributes);
+		//校验是否有无效的排除类，有的话就抛出异常 （暂时不明白这么做的意义）
 		checkExcludedClasses(configurations, exclusions);
+		//从需要自动配置的类中删除需要排除的类
 		configurations.removeAll(exclusions);
+		/**
+		 * 执行 {@link AutoConfigurationImportFilter},此时也可以排除不想使用自动配置的的类
+		 *
+		 * 其实是触发了 {@link org.springframework.boot.autoconfigure.condition.OnClassCondition}排除了
+		 * {@link org.springframework.boot.autoconfigure.condition.ConditionalOnClass} 不存在的类
+		 *
+		 */
 		configurations = filter(configurations, autoConfigurationMetadata);
+		//加载、触发 AutoConfigurationImportListener
 		fireAutoConfigurationImportEvents(configurations, exclusions);
 		return StringUtils.toStringArray(configurations);
 	}
@@ -119,6 +142,7 @@ public class AutoConfigurationImportSelector
 	}
 
 	/**
+	 * 返回合适(?)的AnnotationAttributes，默认返回getAnnotationClass(默认是EnableAutoConfiguration.class)
 	 * Return the appropriate {@link AnnotationAttributes} from the
 	 * {@link AnnotationMetadata}. By default this method will return attributes for
 	 * {@link #getAnnotationClass()}.
@@ -176,6 +200,7 @@ public class AutoConfigurationImportSelector
 			Set<String> exclusions) {
 		List<String> invalidExcludes = new ArrayList<>(exclusions.size());
 		for (String exclusion : exclusions) {
+			//如果exclusion存在，并且configurations不包括它，就是无效的排除类
 			if (ClassUtils.isPresent(exclusion, getClass().getClassLoader())
 					&& !configurations.contains(exclusion)) {
 				invalidExcludes.add(exclusion);
@@ -234,7 +259,9 @@ public class AutoConfigurationImportSelector
 		String[] candidates = StringUtils.toStringArray(configurations);
 		boolean[] skip = new boolean[candidates.length];
 		boolean skipped = false;
+		//获取 AutoConfigurationImportFilter，默认是 OnClassCondition
 		for (AutoConfigurationImportFilter filter : getAutoConfigurationImportFilters()) {
+			//调用filter的aware方法，如果存在
 			invokeAwareMethods(filter);
 			boolean[] match = filter.match(candidates, autoConfigurationMetadata);
 			for (int i = 0; i < match.length; i++) {
@@ -278,6 +305,7 @@ public class AutoConfigurationImportSelector
 
 	private void fireAutoConfigurationImportEvents(List<String> configurations,
 			Set<String> exclusions) {
+		//获取AutoConfigurationImportListener
 		List<AutoConfigurationImportListener> listeners = getAutoConfigurationImportListeners();
 		if (!listeners.isEmpty()) {
 			AutoConfigurationImportEvent event = new AutoConfigurationImportEvent(this,
