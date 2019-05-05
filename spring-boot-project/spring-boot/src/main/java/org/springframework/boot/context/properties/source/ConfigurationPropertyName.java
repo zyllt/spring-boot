@@ -230,6 +230,7 @@ public final class ConfigurationPropertyName
 	}
 
 	/**
+	 * 是不是另外个name的祖先，
 	 * Returns {@code true} if this element is an ancestor (immediate or nested parent) of
 	 * the specified name.
 	 * @param name the name to check
@@ -237,10 +238,12 @@ public final class ConfigurationPropertyName
 	 */
 	public boolean isAncestorOf(ConfigurationPropertyName name) {
 		Assert.notNull(name, "Name must not be null");
+		//this.length <= specified.length
 		if (this.getNumberOfElements() >= name.getNumberOfElements()) {
 			return false;
 		}
 		for (int i = 0; i < this.elements.length; i++) {
+			//equals
 			if (!elementEquals(this.elements[i], name.elements[i])) {
 				return false;
 			}
@@ -371,9 +374,11 @@ public final class ConfigurationPropertyName
 		return true;
 	}
 
+	//软配置的equals
 	private boolean elementEquals(CharSequence e1, CharSequence e2) {
 		int l1 = e1.length();
 		int l2 = e2.length();
+		// []包裹
 		boolean indexed1 = isIndexed(e1);
 		int offset1 = (indexed1 ? 1 : 0);
 		boolean indexed2 = isIndexed(e2);
@@ -381,11 +386,14 @@ public final class ConfigurationPropertyName
 		int i1 = offset1;
 		int i2 = offset2;
 		while (i1 < l1 - offset1) {
+			//实际长度为0
 			if (i2 >= l2 - offset2) {
 				return false;
 			}
+			//indexed内容不忽略大小写
 			char ch1 = (indexed1 ? e1.charAt(i1) : Character.toLowerCase(e1.charAt(i1)));
 			char ch2 = (indexed2 ? e2.charAt(i2) : Character.toLowerCase(e2.charAt(i2)));
+			//忽略 '-'和'_'
 			if (ch1 == '-' || ch1 == '_') {
 				i1++;
 			}
@@ -400,6 +408,7 @@ public final class ConfigurationPropertyName
 				i2++;
 			}
 		}
+		//防止e1只和e2的部分匹配
 		while (i2 < l2 - offset2) {
 			char ch = e2.charAt(i2++);
 			if (ch != '-' && ch != '_') {
@@ -479,6 +488,7 @@ public final class ConfigurationPropertyName
 	 * is split into elements around the given {@code separator}. This method is more
 	 * lenient than {@link #of} in that it allows mixed case names and '{@code _}'
 	 * characters. Other invalid characters are stripped out during parsing.
+	 * 通过调整给定的源创建{@link ConfigurationPropertyName}。根据{@code separator}被拆分为元素。这个方法比{@link #of}更宽松，因为它允许混合大小写名称和'{@code _}'字符。其他无效字符在解析过程中被删除。
 	 * <p>
 	 * The {@code elementValueProcessor} function may be used if additional processing is
 	 * required on the extracted element values.

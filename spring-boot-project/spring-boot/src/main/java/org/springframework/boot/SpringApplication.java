@@ -403,6 +403,7 @@ public class SpringApplication {
 					.convertToStandardEnvironmentIfNecessary(environment);
 		}
 		//把原来的environment的source适配ConfigurationPropertySource，把原来的sources设置为SpringConfigurationPropertySources
+		//此处是为了后面进行属性绑定时可以根据ConfigurationPropertyName来进行获取
 		ConfigurationPropertySources.attach(environment);
 		return environment;
 	}

@@ -39,6 +39,15 @@ import static org.assertj.core.api.Assertions.fail;
  */
 public class ConfigurationPropertyNameTests {
 
+
+	@Test
+	public void ofNameTest(){
+
+		ConfigurationPropertyName name = ConfigurationPropertyName.of("f-oo.to[B.ar]");
+
+		assertThat(name.getElement(2,Form.UNIFORM)).isEqualTo("B.ar");
+	}
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 

@@ -27,22 +27,22 @@ public class SimpleMainTests {
 
 		ApplicationContext applicationContext = SpringApplication.run(SimpleMainTests.class, new String[]{});
 
-		SpringBootBindTestBean beforeBindBean = new SpringBootBindTestBean();
-		beforeBindBean.setBindName("testBeanBindName");
-		beforeBindBean.setBindType("testBeanBindType");
-
-		BindResult<SpringBootBindTestBean> bind = Binder.get(applicationContext.getEnvironment())
-				.bind(
-						ConfigurationPropertyName.of("test.spring"),
-						Bindable.of(SpringBootBindTestBean.class)
-//								.withExistingValue(beforeBindBean)
-//								.withSuppliedValue(() -> beforeBindBean)
-//								.withAnnotations(annotations)
-				);
-		SpringBootBindTestBean bean = bind.orElse(null);
-		Assert.assertNotNull(bean);
-		System.out.println(bean.getBindType());
-		System.out.println(bean.getBindName());
+//		SpringBootBindTestBean beforeBindBean = new SpringBootBindTestBean();
+//		beforeBindBean.setBindName("testBeanBindName");
+//		beforeBindBean.setBindType("testBeanBindType");
+//
+//		BindResult<SpringBootBindTestBean> bind = Binder.get(applicationContext.getEnvironment())
+//				.bind(
+//						ConfigurationPropertyName.of("test.spring"),
+//						Bindable.of(SpringBootBindTestBean.class)
+////								.withExistingValue(beforeBindBean)
+////								.withSuppliedValue(() -> beforeBindBean)
+////								.withAnnotations(annotations)
+//				);
+//		SpringBootBindTestBean bean = bind.orElse(null);
+//		Assert.assertNotNull(bean);
+//		System.out.println(bean.getBindType());
+//		System.out.println(bean.getBindName());
 	}
 
 

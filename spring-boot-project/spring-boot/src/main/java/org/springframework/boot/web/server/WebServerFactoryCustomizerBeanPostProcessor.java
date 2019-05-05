@@ -33,7 +33,7 @@ import org.springframework.util.Assert;
 /**
  * {@link BeanPostProcessor} that applies all {@link WebServerFactoryCustomizer} beans
  * from the bean factory to {@link WebServerFactory} beans.
- *
+ *  *
  * @author Dave Syer
  * @author Phillip Webb
  * @author Stephane Nicoll
@@ -78,6 +78,7 @@ public class WebServerFactoryCustomizerBeanPostProcessor
 				.invoke((customizer) -> customizer.customize(webServerFactory));
 	}
 
+	//beanfactory获取 WebServerFactoryCustomizer
 	private Collection<WebServerFactoryCustomizer<?>> getCustomizers() {
 		if (this.customizers == null) {
 			// Look up does not include the parent context

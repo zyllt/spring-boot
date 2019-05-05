@@ -28,6 +28,7 @@ abstract class BeanPropertyName {
 	}
 
 	/**
+	 * 以'-'形式返回指定的Java Bean属性名。(驼峰转为-)
 	 * Return the specified Java Bean property name in dashed form.
 	 * @param name the source name
 	 * @return the dashed from

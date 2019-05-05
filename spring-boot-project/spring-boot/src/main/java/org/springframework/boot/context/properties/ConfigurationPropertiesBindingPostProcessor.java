@@ -72,6 +72,7 @@ public class ConfigurationPropertiesBindingPostProcessor implements BeanPostProc
 	public void afterPropertiesSet() throws Exception {
 		// We can't use constructor injection of the application context because
 		// it causes eager factory bean initialization
+		//使用这种主要是为了防止比beanFactoryMetadata更早初始化
 		this.beanFactoryMetadata = this.applicationContext.getBean(
 				ConfigurationBeanFactoryMetadata.BEAN_NAME,
 				ConfigurationBeanFactoryMetadata.class);
